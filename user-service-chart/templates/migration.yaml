@@ -1,0 +1,50 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "{{ .Release.Name}}.{{.Chart.Version }}"
+  labels:
+    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+    app.kubernetes.io/instance: {{ .Release.Name | quote }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+  annotations:
+    "helm.sh/hook": post-install
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-succeeded
+spec:
+  template:
+    metadata:
+      name: "{{ .Release.Name }}"
+    spec:
+      restartPolicy: Never
+      initContainers:
+        - name: check-db-ready
+          image: mysql:8
+          env:
+            - name: MYSQL_HOST
+              value: {{ include "mysql.fullname" . | quote }}
+            - name: PORT
+              value: {{ .Values.mysql.service.port | quote }}
+            - name: USER
+              value: {{ .Values.mysql.db.user | quote }}
+            - name: PASS
+              value: {{ .Values.mysql.db.password | quote }}
+          command:
+            - sh
+            - "-c"
+            - until mysql -u $USER -p$PASS -h $MYSQL_HOST -P $PORT -e'select 1'; do echo waiting for database; sleep 2; done
+      containers:
+        - name: post-install-job
+          image: {{ .Values.image.repository }}:{{ .Chart.AppVersion }}
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: mysql
+                  key: DATABASE_URL
+          command:
+            - sh
+            - "-c"
+            - php /app/bin/console doctrine:migration:migrate -n
+
+  backoffLimit: 0
