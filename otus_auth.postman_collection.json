@@ -1,0 +1,573 @@
+{
+	"info": {
+		"_postman_id": "c7577a34-7f91-47de-83c5-c6e329989d2c",
+		"name": "otus_auth",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Register",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "c8251a69-af95-4282-a44a-e16200ff3436",
+						"exec": [
+							"pm.collectionVariables.set(\"name\", pm.collectionVariables.replaceIn('{{$randomLastName}}'));",
+							"pm.collectionVariables.set(\"surname\", pm.collectionVariables.replaceIn('{{$randomLastName}}'));",
+							"pm.collectionVariables.set(\"email\", pm.collectionVariables.replaceIn('{{$randomEmail}}'));",
+							"pm.collectionVariables.set(\"phone\", pm.collectionVariables.replaceIn('{{$randomPhoneNumber}}'));",
+							"pm.collectionVariables.set(\"address\", pm.collectionVariables.replaceIn('{{$randomStreetAddress}}'));",
+							"pm.collectionVariables.set(\"password\", pm.collectionVariables.replaceIn('{{$randomPassword}}'));"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "894d022e-aa12-439a-8c62-f52c7d266ac0",
+						"exec": [
+							"pm.test(\"Register status code\", function() {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"{{name}}\",\n    \"surname\": \"{{surname}}\",\n    \"phone\": \"{{phone}}\",\n    \"address\": \"{{address}}\",\n    \"email\": \"{{email}}\",\n    \"password\": \"{{password}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/user-service/user/register",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"user-service",
+						"user",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Me not logined",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "c43ae932-e847-40e7-ba7e-390712ca68fc",
+						"exec": [
+							"pm.test(\"User me not 200\", function() {",
+							"    pm.response.to.not.have.status(200);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/user-service/user/me",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"user-service",
+						"user",
+						"me"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update not logined",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "c8251a69-af95-4282-a44a-e16200ff3436",
+						"exec": [
+							"pm.collectionVariables.set(\"name\", pm.collectionVariables.replaceIn('{{$randomLastName}}'));",
+							"pm.collectionVariables.set(\"surname\", pm.collectionVariables.replaceIn('{{$randomLastName}}'));",
+							"pm.collectionVariables.set(\"phone\", pm.collectionVariables.replaceIn('{{$randomPhoneNumber}}'));",
+							"pm.collectionVariables.set(\"address\", pm.collectionVariables.replaceIn('{{$randomStreetAddress}}'));"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "140e58f0-77b4-4812-90e0-90cf9ed77185",
+						"exec": [
+							"pm.test(\"User update not 200\", function() {",
+							"    pm.response.to.not.have.status(200);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "Bearer {{token}}",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"{{name}}\",\n    \"surname\": \"{{surname}}\",\n    \"phone\": \"{{phone}}\",\n    \"address\": \"{{address}}\",\n    \"email\": \"{{email}}\",\n    \"password\": \"{{password}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/user-service/user/update",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"user-service",
+						"user",
+						"update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9409d8ed-8284-4e5d-9fa3-0725b8525438",
+						"exec": [
+							"const jsonData = JSON.parse(responseBody);",
+							"pm.collectionVariables.set(\"token\", jsonData.token);",
+							"",
+							"pm.test(\"Login status code 200\", function() {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"{{email}}\",\n    \"password\": \"{{password}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/auth-service/login",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"auth-service",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "c8251a69-af95-4282-a44a-e16200ff3436",
+						"exec": [
+							"pm.collectionVariables.set(\"name\", pm.collectionVariables.replaceIn('{{$randomLastName}}'));",
+							"pm.collectionVariables.set(\"surname\", pm.collectionVariables.replaceIn('{{$randomLastName}}'));",
+							"pm.collectionVariables.set(\"phone\", pm.collectionVariables.replaceIn('{{$randomPhoneNumber}}'));",
+							"pm.collectionVariables.set(\"address\", pm.collectionVariables.replaceIn('{{$randomStreetAddress}}'));"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "c51f75c9-7389-4a6e-a370-277031b158fe",
+						"exec": [
+							"pm.test(\"Login status code 200\", function() {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "Bearer {{token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"{{name}}\",\n    \"surname\": \"{{surname}}\",\n    \"phone\": \"{{phone}}\",\n    \"address\": \"{{address}}\",\n    \"email\": \"{{email}}\",\n    \"password\": \"{{password}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/user-service/user/update",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"user-service",
+						"user",
+						"update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Me",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "3284ea73-2bdd-4b62-b2cb-a57ee1b399e9",
+						"exec": [
+							"pm.test(\"User me has new data\", function() {",
+							"    const jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property(\"surname\");",
+							"",
+							"    const surname = jsonData.surname;",
+							"    pm.expect(surname).to.equal(pm.collectionVariables.get(\"surname\"));",
+							"});",
+							"",
+							"pm.test(\"User me status code 200\", function() {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/user-service/user/me",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"user-service",
+						"user",
+						"me"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register user 2",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "c8251a69-af95-4282-a44a-e16200ff3436",
+						"exec": [
+							"pm.collectionVariables.set(\"name\", pm.collectionVariables.replaceIn('{{$randomLastName}}'));",
+							"pm.collectionVariables.set(\"surname\", pm.collectionVariables.replaceIn('{{$randomLastName}}'));",
+							"pm.collectionVariables.set(\"email\", pm.collectionVariables.replaceIn('{{$randomEmail}}'));",
+							"pm.collectionVariables.set(\"phone\", pm.collectionVariables.replaceIn('{{$randomPhoneNumber}}'));",
+							"pm.collectionVariables.set(\"address\", pm.collectionVariables.replaceIn('{{$randomStreetAddress}}'));",
+							"pm.collectionVariables.set(\"password\", pm.collectionVariables.replaceIn('{{$randomPassword}}'));"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"{{name}}\",\n    \"surname\": \"{{surname}}\",\n    \"phone\": \"{{phone}}\",\n    \"address\": \"{{address}}\",\n    \"email\": \"{{email}}\",\n    \"password\": \"{{password}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/user-service/user/register",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"user-service",
+						"user",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login user 2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9409d8ed-8284-4e5d-9fa3-0725b8525438",
+						"exec": [
+							"const jsonData = JSON.parse(responseBody);",
+							"pm.collectionVariables.set(\"token\", jsonData.token);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"{{email}}\",\n    \"password\": \"{{password}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/auth-service/login",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"auth-service",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Me user 2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "31fa5efd-2709-4aac-8355-3ca9da930746",
+						"exec": [
+							"pm.test(\"User me has new data\", function() {",
+							"    const jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property(\"surname\");",
+							"",
+							"    const surname = jsonData.surname;",
+							"    pm.expect(surname).to.equal(pm.collectionVariables.get(\"surname\"));",
+							"});",
+							"",
+							"pm.test(\"User me status code 200\", function() {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/user-service/user/me",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"user-service",
+						"user",
+						"me"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "5193aa5a-cbe9-48d2-8e04-202e5b4f0044",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "170f5902-8881-494e-adba-71d0064d3af4",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "3074feb1-cf4e-4801-ab86-3f24d4ba8dc8",
+			"key": "name",
+			"value": "Vandervort"
+		},
+		{
+			"id": "85a0a5c2-25dc-452d-ac73-10551f3f7700",
+			"key": "address",
+			"value": "756 Metz Locks"
+		},
+		{
+			"id": "f022f3c3-fefe-4046-b272-9d12335ab90a",
+			"key": "email",
+			"value": "Everette73@gmail.com"
+		},
+		{
+			"id": "1dd5c5d6-c3cd-4ad1-b047-bfa4518722f3",
+			"key": "password",
+			"value": "cLZl8RC22aMmZIg"
+		},
+		{
+			"id": "a45bb394-baae-48f8-885d-89f6536c75b4",
+			"key": "phone",
+			"value": "503-107-1883"
+		},
+		{
+			"id": "923eca5a-5be1-446d-9803-70d39baf08f7",
+			"key": "surname",
+			"value": "Conn"
+		},
+		{
+			"id": "7c336eb5-eaa3-48bf-8956-c9614865acb5",
+			"key": "token",
+			"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE1OTkzMjEzNTEsImV4cCI6MTU5OTMyNDk1MSwicm9sZXMiOltdLCJ1c2VybmFtZSI6IkV2ZXJldHRlNzNAZ21haWwuY29tIn0.cYDzu7lHNp578r_icP4GsJXYNKxyw7MXh0_zLRz5i6WZmmzQWvHhB3y-ZWvRvd1lll_7JLVPWT-A7c9NfImIbomXlOFZ8tJdbxxNEYRw1Y0AF-djjP4eJ3pBt6-wjpkdPKvU8z8e3mSNpMVJuKPZn3WVFQAzvJNjuLIfBIcqjQZ0WU9c38W3NIMwDnJAPGi2zg0kBZ0UofZnfRwQDgpgdTgJp-o2s4xWvkq_xlwIYQPxPJMVhOpucy5EP3Bb3DqAGeylPJsBT3iSe2VrVSF7vPvHUEpJqD1oAiKueIJ_C7az6EoHuAuYjNTZ8tJoiKK4d4dCZPBY87fk7m9TMPMa0bAGieYHB73KhGYbak0HG2pkOUD3jtXjDvIa0nDxfdVL-jWK3o_RGWVYVb7qc70EF2SlSaE2Q24JY9i4dZ6Dgi1Q-_WoTHl2EFMA-krz53VuGwB08y8OWbU8rYARNBrz2xhjhfH84DEZjmG_TGXNZuCvfLrkQOuJGOZxCZ8oJAX8_UgfoGJhSazgAWmsdn3e7Cf74qZfsL-ku0msRBeA0UXTgdmSKdv49HGHLWsxC9ExYr4FbnSUI9NEJ3RkpvY4sFzmxhLFynyNCk0C4HZLkOcgy049_K31oIJ1hTZbb2N5ye-IdcpDZL_hoDFAGqjF-Oi3i-yC0fICsdZ7UF9Iv3Y"
+		},
+		{
+			"id": "620f0f62-3f49-4af6-ad82-ed99656c3faf",
+			"key": "baseUrl",
+			"value": "http://arch.homework/otusapp/bgpastukh"
+		}
+	],
+	"protocolProfileBehavior": {}
+}
