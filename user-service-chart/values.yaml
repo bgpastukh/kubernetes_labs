@@ -27,5 +27,5 @@ mysql:
 
 authService:
   baseUrl: "http://auth-service-auth-service-chart"
-  namespace: "default"
+  namespace: "auth-service"
   port: "8000"
